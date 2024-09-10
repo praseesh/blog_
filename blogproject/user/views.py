@@ -61,3 +61,11 @@ class UserListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
+    
+class UserDetailView(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        authentication_classes = [JWTAuthentication]  
+        permission_classes = [IsAuthenticated]
+        queryset = User.objects.all()
+        serializer_class = UserInfoSerializer
+        lookup_field = 'id'
