@@ -1,8 +1,10 @@
 from django.urls import path
-from post.views import PostView, PostCreateView  # Use absolute import instead of '.views'
+from post.views import PostView, PostCreateView,LikePostView, CommentPostView
 
 urlpatterns = [
     path('', PostView.as_view(), name="posts"),
     path('create/', PostCreateView.as_view(), name='post-create'),
+    path('<int:post_id>/like/', LikePostView.as_view(), name='like-post'),
+    path('<int:post_id>/comment/', CommentPostView.as_view(), name='comment-post'),
     
 ]

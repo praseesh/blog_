@@ -63,9 +63,11 @@ class UserListView(generics.ListAPIView):
     serializer_class = UserInfoSerializer
     
 class UserDetailView(generics.RetrieveAPIView):
+    authentication_classes = [JWTAuthentication]  # These should be class attributes
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()  # Define the queryset at the class level
+    serializer_class = UserInfoSerializer
+    lookup_field = 'id'
+
     def get(self, request, *args, **kwargs):
-        authentication_classes = [JWTAuthentication]  
-        permission_classes = [IsAuthenticated]
-        queryset = User.objects.all()
-        serializer_class = UserInfoSerializer
-        lookup_field = 'id'
+        return super().get(request, *args, **kwargs)
