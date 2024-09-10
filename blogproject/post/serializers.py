@@ -52,8 +52,8 @@ class PostViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
         fields = [
-            'id', 'title', 'content', 'author', 'categories',
-            'like_count', 'liked_by', 'comment_count', 'commented_by', 'comments', 'created_at', 'updated_at'
+            'id', 'title', 'content', 'author', 'categories','like_count', 'liked_by',
+            'comment_count', 'commented_by', 'comments', 'created_at', 'updated_at'
         ]
 
     def get_comment_count(self, obj):
