@@ -1,9 +1,15 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserInfoSerializer,UserLoginSerializer
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status,generics
+from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import GenericAPIView
+from django.utils import timezone
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 User=get_user_model()
 
@@ -21,9 +27,7 @@ class UserLoginView(APIView):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data['user']
-            print("@@@@@@@@@",user)
             refresh = RefreshToken.for_user(user)
-            print("$$$$$$$$$$$")
             access = str(refresh.access_token)
             
             response_data = {
@@ -38,13 +42,22 @@ class UserLoginView(APIView):
             }
             return Response(response_data,status=status.HTTP_200_OK)
 
-class LogoutView(APIView):
-    def post(self,request,*args, **kwargs):
+class LogoutView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request, *args, **kwargs):
+        print("1")
+        
         try:
-            refresh_token = request.data['refresh']
+            refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({'detail':'logout successful'}, status=status.HTTP_205_RESET_CONTENT)
+            return Response({"success": "User logged out successfully"},  status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            print("$$$$$$$$$$$",e)
-            return Response({'detailssss':'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+class UserListView(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]  
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = UserInfoSerializer
