@@ -21,6 +21,18 @@ class PostView(APIView):
         posts = Posts.objects.all()
         serializer = PostViewSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UserPostView(APIView):
+    def get(self, request, post_id):
+        try:
+           post =  Posts.objects.get(id=post_id)
+        except Posts.DoesNotExist:
+            return Response({'error':'Requested MovieNot Exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = PostViewSerializer(post, many=False)
+        return Response(serializer.data)
+    
+    def put(self, request, post_id):
+        pass
 
 class PostCreateView(generics.CreateAPIView):
     authentication_classes = [JWTAuthentication]  
