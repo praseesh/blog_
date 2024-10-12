@@ -7,5 +7,5 @@ urlpatterns = [
     path('<int:post_id>/like/', LikePostView.as_view(), name='like-post'),
     path('<int:post_id>/comment/', CommentPostView.as_view(), name='comment-post'),
     path('<int:post_id>/post/',UserPostView.as_view(), name="user-post"),
-    
+
 ]
